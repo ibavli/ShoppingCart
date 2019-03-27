@@ -102,6 +102,7 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 
             #region Ürünler
 
+            var telefonCat = context.Category.FirstOrDefault(c => c.Id == 1);
             var apple = context.Category.FirstOrDefault(c => c.Id == 3);
             var bilgisayar = context.Category.FirstOrDefault(c => c.Id == 2);
 
@@ -122,20 +123,20 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             };
 
             context.Product.Add(product2);
-
+         
             Product product3 = new Product()
             {
-                Title = "Asus nw978x",
-                Price = 2999,
-                Category = bilgisayar
+                Title = "IPhone 6s",
+                Price = 2599,
+                Category = apple
             };
 
             context.Product.Add(product3);
 
             Product product4 = new Product()
             {
-                Title = "IPhone 6s",
-                Price = 2599,
+                Title = "IPhone 7s",
+                Price = 2999,
                 Category = apple
             };
 
@@ -143,8 +144,8 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 
             Product product5 = new Product()
             {
-                Title = "IPhone 7s",
-                Price = 2999,
+                Title = "IPhone 8s",
+                Price = 33333,
                 Category = apple
             };
 
@@ -152,12 +153,30 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 
             Product product6 = new Product()
             {
-                Title = "IPhone 8s",
-                Price = 33333,
-                Category = apple
+                Title = "Vestel Venus",
+                Price = 750,
+                Category = telefonCat
             };
 
             context.Product.Add(product6);
+
+            Product product7 = new Product()
+            {
+                Title = "Asus nw978x",
+                Price = 2999,
+                Category = bilgisayar
+            };
+
+            context.Product.Add(product7);
+
+            Product product8 = new Product()
+            {
+                Title = "Lenovo l8xm8",
+                Price = 3499,
+                Category = bilgisayar
+            };
+
+            context.Product.Add(product8);
 
             context.SaveChanges();
 
@@ -173,6 +192,10 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             var cart1db = context.ShoppingCart.FirstOrDefault(x => x.Id == 1);
             var cartIphone4s = context.Product.FirstOrDefault(x => x.Title == "IPhone 4s");
             var cartIphone5s = context.Product.FirstOrDefault(x => x.Title == "IPhone 5s");
+            var cartIphone6s = context.Product.FirstOrDefault(x => x.Title == "IPhone 6s");
+            var cartIphone7s = context.Product.FirstOrDefault(x => x.Title == "IPhone 7s");
+            var cartIphone8s = context.Product.FirstOrDefault(x => x.Title == "IPhone 8s");
+            var lenovoLaptop = context.Product.FirstOrDefault(x => x.Title == "Lenovo l8xm8");
             ShoppingCartDetail cart1Product1 = new ShoppingCartDetail()
             {
                 Product = cartIphone4s,
@@ -185,8 +208,36 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
                 Quantity = 2,
                 ShoppingCart = cart1
             };
+            ShoppingCartDetail cart1Product3 = new ShoppingCartDetail()
+            {
+                Product = cartIphone6s,
+                Quantity = 3,
+                ShoppingCart = cart1
+            };
+            ShoppingCartDetail cart1Product4 = new ShoppingCartDetail()
+            {
+                Product = cartIphone7s,
+                Quantity = 1,
+                ShoppingCart = cart1
+            };
+            ShoppingCartDetail cart1Product5 = new ShoppingCartDetail()
+            {
+                Product = cartIphone8s,
+                Quantity = 1,
+                ShoppingCart = cart1
+            };
+            ShoppingCartDetail cart1Product6 = new ShoppingCartDetail()
+            {
+                Product = lenovoLaptop,
+                Quantity = 1,
+                ShoppingCart = cart1
+            };
             context.ShoppingCartDetail.Add(cart1Product1);
             context.ShoppingCartDetail.Add(cart1Product2);
+            context.ShoppingCartDetail.Add(cart1Product3);
+            context.ShoppingCartDetail.Add(cart1Product4);
+            context.ShoppingCartDetail.Add(cart1Product5);
+            context.ShoppingCartDetail.Add(cart1Product6);
             context.SaveChanges();
 
             #endregion
