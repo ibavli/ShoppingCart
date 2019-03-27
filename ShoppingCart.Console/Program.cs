@@ -14,6 +14,10 @@ namespace ShoppingCart.Console
             DatabaseContext db = DatabaseContext.CreateDBWithSingleton();
 
             var products = db.Product.ToList();
-        }
+            var categories = db.Category.ToList();
+            var shoppingCarts = db.ShoppingCart.ToList();
+            var shoppingCartDetails = db.ShoppingCartDetail.ToList();
+
+       }
     }
 }

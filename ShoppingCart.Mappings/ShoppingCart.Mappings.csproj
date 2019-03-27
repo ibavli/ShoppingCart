@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseEntityMap.cs" />
+    <Compile Include="CartMap\ShoppingCartDetailMap.cs" />
+    <Compile Include="CartMap\ShoppingCartMap.cs" />
     <Compile Include="CategoryMap\CategoryMap.cs" />
     <Compile Include="ProductMap\ProductMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

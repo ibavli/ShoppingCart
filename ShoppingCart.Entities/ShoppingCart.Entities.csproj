@@ -42,6 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseEntity.cs" />
+    <Compile Include="Cart\ShoppingCart.cs" />
+    <Compile Include="Cart\ShoppingCartDetail.cs" />
     <Compile Include="CategoryEntities\Category.cs" />
     <Compile Include="ProductEntities\Product.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,5 +1,7 @@
-﻿using ShoppingCart.Entities.CategoryEntities;
+﻿using ShoppingCart.Entities.Cart;
+using ShoppingCart.Entities.CategoryEntities;
 using ShoppingCart.Entities.ProductEntities;
+using ShoppingCart.Mappings.CartMap;
 using ShoppingCart.Mappings.CategoryMap;
 using ShoppingCart.Mappings.ProductMap;
 using System;
@@ -38,7 +40,8 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 
         public DbSet<Product> Product { get; set; }
         public DbSet<Category> Category { get; set; }
-
+        public DbSet<ShoppingCart.Entities.Cart.ShoppingCart> ShoppingCart { get; set; }
+        public DbSet<ShoppingCart.Entities.Cart.ShoppingCartDetail> ShoppingCartDetail { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -47,6 +50,8 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 
             modelBuilder.Configurations.Add(new ProductMap());
             modelBuilder.Configurations.Add(new CategoryMap());
+            modelBuilder.Configurations.Add(new ShoppingCartMap());
+            modelBuilder.Configurations.Add(new ShoppingCartDetailMap());
 
             Database.SetInitializer(new VeritabaniOlusurkenTablolaraBaslangicKayitlariEkleme());
         }
@@ -121,6 +126,34 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 
             context.Product.Add(product3);
 
+            context.SaveChanges();
+
+            #endregion
+
+            #region Sepete ürün ekle
+
+            ShoppingCart.Entities.Cart.ShoppingCart cart1 = new Entities.Cart.ShoppingCart() { };
+
+            context.ShoppingCart.Add(cart1);
+            context.SaveChanges();
+
+            var cart1db = context.ShoppingCart.FirstOrDefault(x => x.Id == 1);
+            var cartIphone4s = context.Product.FirstOrDefault(x => x.Title == "IPhone 4s");
+            var cartIphone5s = context.Product.FirstOrDefault(x => x.Title == "IPhone 5s");
+            ShoppingCartDetail cart1Product1 = new ShoppingCartDetail()
+            {
+                Product = cartIphone4s,
+                Quantity = 2,
+                ShoppingCart = cart1
+            };
+            ShoppingCartDetail cart1Product2 = new ShoppingCartDetail()
+            {
+                Product = cartIphone5s,
+                Quantity = 2,
+                ShoppingCart = cart1
+            };
+            context.ShoppingCartDetail.Add(cart1Product1);
+            context.ShoppingCartDetail.Add(cart1Product2);
             context.SaveChanges();
 
             #endregion
