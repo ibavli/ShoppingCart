@@ -108,18 +108,27 @@ namespace ShoppingCart.Dal.Concrete.CartConc
             if (bestCampaign == null)
                 return shoppingCart;
 
+            var categoryIds = bestCampaign.Categories.Select(x => x.CategoryId).ToList();
+            var parentCategoryIds = db.Category.Where(c => categoryIds.Contains(c.ParentId)).Select(x => x.Id).ToList();
+
+            var Ids = categoryIds;
+            Ids.AddRange(parentCategoryIds.Cast<int?>());
+
             switch (bestCampaign.DiscountType)
             {
-                case DiscountType.Rate:
-                    
-                    break;
-                case DiscountType.Amount:
-                    break;
-                default:
-                    break;
-            }
-            return shoppingCart;
+                case DiscountType.Rate:                   
+                    var newShoppingCartDetailRate = shoppingCart.ShoppingCartDetail.Where(c => Ids.Contains(c.Product.CategoryId)).Select(x => { x.Product.Price = (((x.Product.Price) * (decimal)bestCampaign.DiscountValue) / 100); return x; }).ToList();
 
+                    shoppingCart.ShoppingCartDetail = newShoppingCartDetailRate;
+                    return shoppingCart;
+                case DiscountType.Amount:
+                    var newShoppingCartDetailAmount = shoppingCart.ShoppingCartDetail.Where(c => Ids.Contains(c.Product.CategoryId)).Select(x => { x.Product.Price = (x.Product.Price - (decimal)bestCampaign.DiscountValue); return x; }).ToList();
+
+                    shoppingCart.ShoppingCartDetail = newShoppingCartDetailAmount;
+                    return shoppingCart;
+                default:
+                    return shoppingCart;
+            }
         }
 
 
@@ -145,7 +154,7 @@ namespace ShoppingCart.Dal.Concrete.CartConc
 
             //Sepete uygun birden fazla sayıda kampanya mevcutsa, aralarındaki en iyisini buluyoruz.
             var getBestCampaign = GetBestCampaign(validCampaigns:validCampaigns, shoppingCart:shoppingCart);
-            return PrepareNewShoppingCart(bestCampaign: getBestCampaign, shoppingCart: shoppingCart);
+                return PrepareNewShoppingCart(bestCampaign: getBestCampaign, shoppingCart: shoppingCart);
         }
 
        

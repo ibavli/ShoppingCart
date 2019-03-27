@@ -55,6 +55,7 @@ namespace ShoppingCart.Console
                 System.Console.WriteLine($"Sepetteki farklı Kategori sayısı : {shoppingCart.ShoppingCartDetail.Select(c => c.Product.CategoryId).Distinct().Count()}");
             }
 
+
             System.Console.ReadLine();
         }
 
