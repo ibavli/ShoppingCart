@@ -86,7 +86,6 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 
             context.SaveChanges();
 
-
             var telefon = context.Category.FirstOrDefault(c => c.Id == 1);
 
             Category category3 = new Category()
@@ -96,6 +95,14 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             };
 
             context.Category.Add(category3);
+
+            Category category4 = new Category()
+            {
+                Title = "Beyaz Eşya"
+            };
+
+            context.Category.Add(category4);
+
             context.SaveChanges();
 
             #endregion
@@ -105,6 +112,7 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             var telefonCat = context.Category.FirstOrDefault(c => c.Id == 1);
             var apple = context.Category.FirstOrDefault(c => c.Id == 3);
             var bilgisayar = context.Category.FirstOrDefault(c => c.Id == 2);
+            var beyazesya = context.Category.FirstOrDefault(c => c.Id == 4);
 
             Product product1 = new Product()
             {
@@ -145,7 +153,7 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             Product product5 = new Product()
             {
                 Title = "IPhone 8s",
-                Price = 33333,
+                Price = 3333,
                 Category = apple
             };
 
@@ -178,6 +186,24 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 
             context.Product.Add(product8);
 
+            Product product9 = new Product()
+            {
+                Title = "Çamaşır Makinası",
+                Price = 4878,
+                Category = beyazesya
+            };
+
+            context.Product.Add(product9);
+
+            Product product10 = new Product()
+            {
+                Title = "HTC xyz",
+                Price = 789,
+                Category = telefonCat
+            };
+
+            context.Product.Add(product10);
+
             context.SaveChanges();
 
             #endregion
@@ -196,6 +222,7 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             var cartIphone7s = context.Product.FirstOrDefault(x => x.Title == "IPhone 7s");
             var cartIphone8s = context.Product.FirstOrDefault(x => x.Title == "IPhone 8s");
             var lenovoLaptop = context.Product.FirstOrDefault(x => x.Title == "Lenovo l8xm8");
+            var htcTelefon = context.Product.FirstOrDefault(x => x.Title == "HTC xyz");
             ShoppingCartDetail cart1Product1 = new ShoppingCartDetail()
             {
                 Product = cartIphone4s,
@@ -232,12 +259,19 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
                 Quantity = 1,
                 ShoppingCart = cart1
             };
+            ShoppingCartDetail cart1Product7 = new ShoppingCartDetail()
+            {
+                Product = htcTelefon,
+                Quantity = 1,
+                ShoppingCart = cart1
+            };
             context.ShoppingCartDetail.Add(cart1Product1);
             context.ShoppingCartDetail.Add(cart1Product2);
             context.ShoppingCartDetail.Add(cart1Product3);
             context.ShoppingCartDetail.Add(cart1Product4);
             context.ShoppingCartDetail.Add(cart1Product5);
             context.ShoppingCartDetail.Add(cart1Product6);
+            context.ShoppingCartDetail.Add(cart1Product7);
             context.SaveChanges();
 
             #endregion
@@ -312,6 +346,85 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             };
 
             context.CampaignCategoryMapping.Add(campaignCategoryMapping3);
+
+            context.SaveChanges();
+
+            #endregion
+
+            #region İndirim 4
+
+            Campaign campaign4 = new Campaign()
+            {
+                DiscountValue = 70,
+                ProductCount = 25,
+                DiscountType = DiscountType.Rate
+            };
+            context.Campaign.Add(campaign4);
+            context.SaveChanges();
+
+            var dbCampaign4 = context.Campaign.FirstOrDefault(c => c.Id == 4);
+
+            CampaignCategoryMapping campaignCategoryMapping4 = new CampaignCategoryMapping()
+            {
+                Category = appleCatForCampaign,
+                Campaign = dbCampaign4
+            };
+
+            context.CampaignCategoryMapping.Add(campaignCategoryMapping4);
+
+            context.SaveChanges();
+
+            #endregion
+
+            #region İndirim 5
+
+            var beyazEsyaCatForCampaign = context.Category.FirstOrDefault(c => c.Title == "Beyaz Eşya");
+
+            Campaign campaign5 = new Campaign()
+            {
+                DiscountValue = 50,
+                ProductCount = 1,
+                DiscountType = DiscountType.Rate
+            };
+            context.Campaign.Add(campaign5);
+            context.SaveChanges();
+
+            var dbCampaign5 = context.Campaign.FirstOrDefault(c => c.Id == 5);
+
+            CampaignCategoryMapping campaignCategoryMapping5 = new CampaignCategoryMapping()
+            {
+                Category = beyazEsyaCatForCampaign,
+                Campaign = dbCampaign5
+            };
+
+            context.CampaignCategoryMapping.Add(campaignCategoryMapping5);
+
+            context.SaveChanges();
+
+            #endregion
+
+            #region İndirim 6
+
+            Campaign campaign6 = new Campaign()
+            {
+                DiscountValue = 51,
+                ProductCount = 5,
+                DiscountType = DiscountType.Rate
+            };
+            context.Campaign.Add(campaign6);
+            context.SaveChanges();
+
+            var dbCampaign6 = context.Campaign.FirstOrDefault(c => c.Id == 6);
+
+            var telefonCatForCampaign = context.Category.FirstOrDefault(c => c.Title == "Telefon");
+
+            CampaignCategoryMapping campaignCategoryMapping6 = new CampaignCategoryMapping()
+            {
+                Category = telefonCatForCampaign,
+                Campaign = dbCampaign6
+            };
+
+            context.CampaignCategoryMapping.Add(campaignCategoryMapping6);
 
             context.SaveChanges();
 

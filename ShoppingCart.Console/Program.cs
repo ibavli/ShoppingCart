@@ -1,4 +1,5 @@
 ﻿using ShoppingCart.Dal.Manager.EntityFramework;
+using ShoppingCart.Entities.CampaignEntities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,7 @@ namespace ShoppingCart.Console
                 System.Console.WriteLine($"Sepetteki farklı Ürün sayısı : {shoppingCart.ShoppingCartDetail.Count()}");
                 System.Console.WriteLine($"Sepetteki farklı Kategori sayısı : {shoppingCart.ShoppingCartDetail.Select(c => c.Product.CategoryId).Distinct().Count()}");
             }
+
             System.Console.ReadLine();
         }
 

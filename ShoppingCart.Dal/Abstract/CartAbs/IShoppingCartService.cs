@@ -11,5 +11,12 @@ namespace ShoppingCart.Dal.Abstract.CartAbs
         bool SaveShoppingCart(ShoppingCart.Entities.Cart.ShoppingCart shoppingCart);
 
         ShoppingCart.Entities.Cart.ShoppingCart GetById(int Id);
+
+        /// <summary>
+        /// Sepete maksimum indirimi uygular.
+        /// </summary>
+        /// <param name="shoppingCart"></param>
+        /// <returns></returns>
+        ShoppingCart.Entities.Cart.ShoppingCart ApplyDiscounts(ShoppingCart.Entities.Cart.ShoppingCart shoppingCart);
     }
 }
