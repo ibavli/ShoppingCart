@@ -26,6 +26,84 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             modelBuilder.Configurations.Add(new ProductMap());
             modelBuilder.Configurations.Add(new CategoryMap());
 
+            Database.SetInitializer(new VeritabaniOlusurkenTablolaraBaslangicKayitlariEkleme());
+        }
+    }
+
+    public class VeritabaniOlusurkenTablolaraBaslangicKayitlariEkleme : CreateDatabaseIfNotExists<DatabaseContext>
+    {
+        protected override void Seed(DatabaseContext context)
+        {
+            #region Veritabanı oluşurken örnek verileri kaydet
+
+            #region Kategoriler
+
+            Category category1 = new Category()
+            {
+                Title = "Telefon"
+            };
+            context.Category.Add(category1);
+
+            Category category2 = new Category()
+            {
+                Title = "Bilgisayar"
+            };
+
+            context.Category.Add(category2);
+
+            context.SaveChanges();
+
+
+            var telefon = context.Category.FirstOrDefault(c => c.Id == 1);
+
+            Category category3 = new Category()
+            {
+                Title = "Apple",
+                Parent = telefon
+            };
+
+            context.Category.Add(category3);
+            context.SaveChanges();
+
+            #endregion
+
+            #region Ürünler
+
+            var apple = context.Category.FirstOrDefault(c => c.Id == 3);
+            var bilgisayar = context.Category.FirstOrDefault(c => c.Id == 2);
+
+            Product product1 = new Product()
+            {
+                Title = "IPhone 4s",
+                Price = 999,
+                Category = apple
+            };
+
+            context.Product.Add(product1);
+
+            Product product2 = new Product()
+            {
+                Title = "IPhone 5s",
+                Price = 1999,
+                Category = apple
+            };
+
+            context.Product.Add(product2);
+
+            Product product3 = new Product()
+            {
+                Title = "Asus nw978x",
+                Price = 2999,
+                Category = bilgisayar
+            };
+
+            context.Product.Add(product3);
+
+            context.SaveChanges();
+
+            #endregion
+
+            #endregion
         }
     }
 }

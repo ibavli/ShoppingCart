@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShoppingCart.Dal.Manager.EntityFramework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,9 @@ namespace ShoppingCart.Console
     {
         static void Main(string[] args)
         {
+            DatabaseContext db = new DatabaseContext();
+
+            var products = db.Product.ToList();
         }
     }
 }
