@@ -56,6 +56,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CampaignTest\CampaignTest.cs" />
     <Compile Include="CartTest\CartTest.cs" />
     <Compile Include="CategoryTest\CategoryTest.cs" />
     <Compile Include="ProductTest\ProductTest.cs" />

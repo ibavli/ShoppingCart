@@ -18,6 +18,8 @@ namespace ShoppingCart.Entities.CampaignEntities
 
         #endregion
 
+        public string CampaignTitle { get; set; }
+
         public double DiscountValue { get; set; }
 
         public int ProductCount { get; set; }

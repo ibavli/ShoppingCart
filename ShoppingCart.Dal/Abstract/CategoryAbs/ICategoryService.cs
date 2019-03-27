@@ -13,7 +13,8 @@ namespace ShoppingCart.Dal.Abstract.CategoryAbs
 
         Category GetById(int Id);
 
-        List<Category> GetCategories();
+        List<Category> GetCategories(List<int> Ids = null);
+
     }
 }
 

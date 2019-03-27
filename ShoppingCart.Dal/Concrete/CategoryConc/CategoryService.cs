@@ -18,9 +18,12 @@ namespace ShoppingCart.Dal.Concrete.CategoryConc
             return db.Category.FirstOrDefault(p => p.Id == Id);
         }
 
-        public List<Category> GetCategories()
+        public List<Category> GetCategories(List<int> Ids = null)
         {
-            return db.Category.ToList();
+            if(Ids == null)
+                return db.Category.ToList();
+
+            return db.Category.Where(c => Ids.Contains(c.Id)).ToList();
         }
 
         public bool SaveCategory(Category category)
