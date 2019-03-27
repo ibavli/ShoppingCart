@@ -48,8 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstract\CartAbs\ICartDetailService.cs" />
+    <Compile Include="Abstract\CartAbs\IShoppingCartService.cs" />
     <Compile Include="Abstract\CategoryAbs\ICategoryService.cs" />
     <Compile Include="Abstract\ProductAbs\IProductService.cs" />
+    <Compile Include="Concrete\CartConc\CartDetailService.cs" />
+    <Compile Include="Concrete\CartConc\ShoppingCartService.cs" />
     <Compile Include="Concrete\CategoryConc\CategoryService.cs" />
     <Compile Include="Concrete\ProductConc\ProductService.cs" />
     <Compile Include="Manager\EntityFramework\DatabaseContext.cs" />
