@@ -11,7 +11,7 @@ namespace ShoppingCart.Console
     {
         static void Main(string[] args)
         {
-            DatabaseContext db = new DatabaseContext();
+            DatabaseContext db = DatabaseContext.CreateDBWithSingleton();
 
             var products = db.Product.ToList();
         }

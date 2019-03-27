@@ -14,6 +14,28 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 {
     public class DatabaseContext : DbContext
     {
+        #region Singleton Design Pattern
+
+        private static DatabaseContext databaseContext;
+        static object _lock = new object();
+        private DatabaseContext()
+        {
+
+        }
+        public static DatabaseContext CreateDBWithSingleton()
+        {
+            lock (_lock)
+            {
+                if (databaseContext == null)
+                {
+                    databaseContext = new DatabaseContext();
+                }
+            }
+            return databaseContext;
+        }
+
+        #endregion
+
         public DbSet<Product> Product { get; set; }
         public DbSet<Category> Category { get; set; }
 
