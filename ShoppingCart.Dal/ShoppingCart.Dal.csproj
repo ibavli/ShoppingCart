@@ -48,7 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstract\CategoryAbs\ICategoryService.cs" />
     <Compile Include="Abstract\ProductAbs\IProductService.cs" />
+    <Compile Include="Concrete\CategoryConc\CategoryService.cs" />
     <Compile Include="Concrete\ProductConc\ProductService.cs" />
     <Compile Include="Manager\EntityFramework\DatabaseContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
