@@ -116,13 +116,21 @@ namespace ShoppingCart.Dal.Concrete.CartConc
 
             switch (bestCampaign.DiscountType)
             {
-                case DiscountType.Rate:                   
+                case DiscountType.Rate:     
+                    //İndirim olanlar
                     var newShoppingCartDetailRate = shoppingCart.ShoppingCartDetail.Where(c => Ids.Contains(c.Product.CategoryId)).Select(x => { x.Product.Price = (((x.Product.Price) * (decimal)bestCampaign.DiscountValue) / 100); return x; }).ToList();
+                    //İndirim olmayanlar
+                    var newShoppingCartDetailRateNonDiscount = shoppingCart.ShoppingCartDetail.Where(c => !Ids.Contains(c.Product.CategoryId)).ToList();
+                    newShoppingCartDetailRate.AddRange(newShoppingCartDetailRateNonDiscount);
 
                     shoppingCart.ShoppingCartDetail = newShoppingCartDetailRate;
                     return shoppingCart;
                 case DiscountType.Amount:
+                    //İndirim olanlar
                     var newShoppingCartDetailAmount = shoppingCart.ShoppingCartDetail.Where(c => Ids.Contains(c.Product.CategoryId)).Select(x => { x.Product.Price = (x.Product.Price - (decimal)bestCampaign.DiscountValue); return x; }).ToList();
+                    //İndirim olmayanlar
+                    var newShoppingCartDetailAmountNonDiscount = shoppingCart.ShoppingCartDetail.Where(c => !Ids.Contains(c.Product.CategoryId)).ToList();
+                    newShoppingCartDetailAmount.AddRange(newShoppingCartDetailAmountNonDiscount);
 
                     shoppingCart.ShoppingCartDetail = newShoppingCartDetailAmount;
                     return shoppingCart;
