@@ -17,7 +17,9 @@ namespace ShoppingCart.Console
             var categories = db.Category.ToList();
             var shoppingCarts = db.ShoppingCart.ToList();
             var shoppingCartDetails = db.ShoppingCartDetail.ToList();
+            var campaign = db.Campaign.ToList();
+            var campaignCategoryMapping = db.CampaignCategoryMapping.ToList();
 
-       }
+        }
     }
 }

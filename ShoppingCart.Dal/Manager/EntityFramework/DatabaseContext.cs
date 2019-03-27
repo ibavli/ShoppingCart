@@ -1,6 +1,8 @@
-﻿using ShoppingCart.Entities.Cart;
+﻿using ShoppingCart.Entities.CampaignEntities;
+using ShoppingCart.Entities.Cart;
 using ShoppingCart.Entities.CategoryEntities;
 using ShoppingCart.Entities.ProductEntities;
+using ShoppingCart.Mappings.CampaignMap;
 using ShoppingCart.Mappings.CartMap;
 using ShoppingCart.Mappings.CategoryMap;
 using ShoppingCart.Mappings.ProductMap;
@@ -42,6 +44,8 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
         public DbSet<Category> Category { get; set; }
         public DbSet<ShoppingCart.Entities.Cart.ShoppingCart> ShoppingCart { get; set; }
         public DbSet<ShoppingCart.Entities.Cart.ShoppingCartDetail> ShoppingCartDetail { get; set; }
+        public DbSet<Campaign> Campaign { get; set; }
+        public DbSet<CampaignCategoryMapping> CampaignCategoryMapping { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -52,6 +56,8 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             modelBuilder.Configurations.Add(new CategoryMap());
             modelBuilder.Configurations.Add(new ShoppingCartMap());
             modelBuilder.Configurations.Add(new ShoppingCartDetailMap());
+            modelBuilder.Configurations.Add(new CampaignMap());
+            modelBuilder.Configurations.Add(new CampaignCategoryMap());
 
             Database.SetInitializer(new VeritabaniOlusurkenTablolaraBaslangicKayitlariEkleme());
         }
@@ -126,6 +132,33 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 
             context.Product.Add(product3);
 
+            Product product4 = new Product()
+            {
+                Title = "IPhone 6s",
+                Price = 2599,
+                Category = apple
+            };
+
+            context.Product.Add(product4);
+
+            Product product5 = new Product()
+            {
+                Title = "IPhone 7s",
+                Price = 2999,
+                Category = apple
+            };
+
+            context.Product.Add(product5);
+
+            Product product6 = new Product()
+            {
+                Title = "IPhone 8s",
+                Price = 33333,
+                Category = apple
+            };
+
+            context.Product.Add(product6);
+
             context.SaveChanges();
 
             #endregion
@@ -155,6 +188,83 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             context.ShoppingCartDetail.Add(cart1Product1);
             context.ShoppingCartDetail.Add(cart1Product2);
             context.SaveChanges();
+
+            #endregion
+
+            #region İndirim Ekle
+
+            #region İndirim 1
+
+            Campaign campaign1 = new Campaign()
+            {
+                DiscountValue = 20.0,
+                ProductCount = 3,
+                DiscountType = DiscountType.Rate
+            };
+            context.Campaign.Add(campaign1);
+            context.SaveChanges();
+
+            var appleCatForCampaign = context.Category.FirstOrDefault(c => c.Title == "Apple");
+
+            var dbCampaign1 = context.Campaign.FirstOrDefault(c => c.Id == 1);
+
+            CampaignCategoryMapping campaignCategoryMapping1 = new CampaignCategoryMapping()
+            {
+                Category = appleCatForCampaign,
+                Campaign = dbCampaign1
+            };
+
+            context.CampaignCategoryMapping.Add(campaignCategoryMapping1);
+
+            #endregion
+
+            #region İndirim 2
+
+            Campaign campaign2 = new Campaign()
+            {
+                DiscountValue = 50.0,
+                ProductCount = 5,
+                DiscountType = DiscountType.Rate
+            };
+            context.Campaign.Add(campaign2);
+            context.SaveChanges();
+
+            var dbCampaign2 = context.Campaign.FirstOrDefault(c => c.Id == 2);
+
+            CampaignCategoryMapping campaignCategoryMapping2 = new CampaignCategoryMapping()
+            {
+                Category = appleCatForCampaign,
+                Campaign = dbCampaign2
+            };
+
+            context.CampaignCategoryMapping.Add(campaignCategoryMapping2);
+
+            #endregion
+
+            #region İndirim 3
+
+            Campaign campaign3 = new Campaign()
+            {
+                DiscountValue = 5.0,
+                ProductCount = 5,
+                DiscountType = DiscountType.Amount
+            };
+            context.Campaign.Add(campaign3);
+            context.SaveChanges();
+
+            var dbCampaign3 = context.Campaign.FirstOrDefault(c => c.Id == 3);
+
+            CampaignCategoryMapping campaignCategoryMapping3 = new CampaignCategoryMapping()
+            {
+                Category = appleCatForCampaign,
+                Campaign = dbCampaign3
+            };
+
+            context.CampaignCategoryMapping.Add(campaignCategoryMapping3);
+
+            context.SaveChanges();
+
+            #endregion
 
             #endregion
 

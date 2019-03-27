@@ -1,4 +1,5 @@
-﻿using ShoppingCart.Entities.ProductEntities;
+﻿using ShoppingCart.Entities.CampaignEntities;
+using ShoppingCart.Entities.ProductEntities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace ShoppingCart.Entities.CategoryEntities
         public Category()
         {
             Products = new List<Product>();
+            Campaigns = new List<CampaignCategoryMapping>();
         }
 
         #endregion
@@ -25,6 +27,9 @@ namespace ShoppingCart.Entities.CategoryEntities
         public virtual Category Parent { get; set; }
 
         public ICollection<Product> Products { get; set; }
+
+        public virtual ICollection<CampaignCategoryMapping> Campaigns { get; set; }
+
     }
 }
 
