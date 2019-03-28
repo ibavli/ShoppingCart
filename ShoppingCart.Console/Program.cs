@@ -1,5 +1,7 @@
 ﻿using Autofac;
+using ShoppingCart.Dal.Abstract.CampaignAbs;
 using ShoppingCart.Dal.Abstract.CartAbs;
+using ShoppingCart.Dal.Concrete.CampaignConc;
 using ShoppingCart.Dal.Concrete.CartConc;
 using ShoppingCart.Dal.Manager.EntityFramework;
 using ShoppingCart.Entities.CampaignEntities;
@@ -25,11 +27,13 @@ namespace ShoppingCart.Console
             var shoppingCartDetails = db.ShoppingCartDetail.ToList();
             var campaigns = db.Campaign.ToList();
             var campaignCategoryMappings = db.CampaignCategoryMapping.ToList();
+            var coupons = db.Coupon.ToList();
 
             #endregion
 
             var container = BuildContainer();
             var _shoppingCartService = container.Resolve<IShoppingCartService>();
+            var _couponService = container.Resolve<ICouponService>();
 
             WriteTitle("Oluşturulan Kategoriler");
             foreach (var category in categories)
@@ -52,8 +56,15 @@ namespace ShoppingCart.Console
                 }
             }
 
+            WriteTitle("Oluşturulan Kuponlar");
+            foreach (var coupon in coupons)
+            {
+                System.Console.WriteLine($"Min Amount : {coupon.MinAmount}, DiscountValue : {coupon.DiscountValue}, DiscountType : {coupon.DiscountType}");     
+            }
+
             WriteTitle("Oluşturulan Sepetler");
             var totalCartAmount = decimal.Zero;
+            var dbCoupon = _couponService.GetById(1);
             foreach (var shoppingCart in shoppingCarts)
             {
                 System.Console.WriteLine($"Cart Id : {shoppingCart.Id} ");
@@ -79,6 +90,10 @@ namespace ShoppingCart.Console
                 System.Console.WriteLine($"Sepetteki farklı Ürün sayısı : {shoppingCart.ShoppingCartDetail.Count()}");
                 System.Console.WriteLine($"Sepetteki farklı Kategori sayısı : {shoppingCart.ShoppingCartDetail.Select(c => c.Product.CategoryId).Distinct().Count()}");
                 System.Console.WriteLine($"Sepet toplam tutarı : {totalCartAmount}");
+
+                WriteTitle("Sepetin kupon Uygulanmış Hali");
+                System.Console.WriteLine($"Yeni sepet toplam tutarı : {_shoppingCartService.ApplyCoupon(coupon: dbCoupon, totalCartAmount: totalCartAmount)}");
+
                 totalCartAmount = 0;
 
             }
@@ -87,13 +102,15 @@ namespace ShoppingCart.Console
             System.Console.ReadLine();
         }
 
+
+
+
         static void WriteTitle(string value)
         {
             System.Console.ForegroundColor = ConsoleColor.Red;
             System.Console.WriteLine("\n" + value.PadRight(System.Console.WindowWidth - 1));
             System.Console.ResetColor();
         }
-
 
         #region Autofac DI ()
 
@@ -107,6 +124,10 @@ namespace ShoppingCart.Console
 
             builder.RegisterType<ShoppingCartService>()
                    .As<IShoppingCartService>()
+                   .InstancePerDependency();
+
+            builder.RegisterType<CouponService>()
+                   .As<ICouponService>()
                    .InstancePerDependency();
      
             return builder.Build();

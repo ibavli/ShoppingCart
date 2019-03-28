@@ -51,6 +51,7 @@
     <Compile Include="BaseEntityMap.cs" />
     <Compile Include="CampaignMap\CampaignCategoryMap.cs" />
     <Compile Include="CampaignMap\CampaignMap.cs" />
+    <Compile Include="CampaignMap\CouponMap.cs" />
     <Compile Include="CartMap\ShoppingCartDetailMap.cs" />
     <Compile Include="CartMap\ShoppingCartMap.cs" />
     <Compile Include="CategoryMap\CategoryMap.cs" />

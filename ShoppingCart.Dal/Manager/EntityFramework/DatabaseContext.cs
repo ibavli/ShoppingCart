@@ -46,6 +46,7 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
         public DbSet<ShoppingCart.Entities.Cart.ShoppingCartDetail> ShoppingCartDetail { get; set; }
         public DbSet<Campaign> Campaign { get; set; }
         public DbSet<CampaignCategoryMapping> CampaignCategoryMapping { get; set; }
+        public DbSet<Coupon> Coupon { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -58,6 +59,7 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             modelBuilder.Configurations.Add(new ShoppingCartDetailMap());
             modelBuilder.Configurations.Add(new CampaignMap());
             modelBuilder.Configurations.Add(new CampaignCategoryMap());
+            modelBuilder.Configurations.Add(new CouponMap());
 
             Database.SetInitializer(new VeritabaniOlusurkenTablolaraBaslangicKayitlariEkleme());
         }
@@ -429,6 +431,20 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
             context.SaveChanges();
 
             #endregion
+
+            #endregion
+
+            #region Kampanya Ekle
+
+            Coupon coupon = new Coupon()
+            {
+                DiscountType = DiscountType.Rate,
+                MinAmount = 2000,
+                DiscountValue = 10
+            };
+
+            context.Coupon.Add(coupon);
+            context.SaveChanges();
 
             #endregion
 

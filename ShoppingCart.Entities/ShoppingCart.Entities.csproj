@@ -44,6 +44,7 @@
     <Compile Include="BaseEntity.cs" />
     <Compile Include="CampaignEntities\Campaign.cs" />
     <Compile Include="CampaignEntities\CampaignCategoryMapping.cs" />
+    <Compile Include="CampaignEntities\Coupon.cs" />
     <Compile Include="CampaignEntities\DiscountType.cs" />
     <Compile Include="CartEntities\ShoppingCart.cs" />
     <Compile Include="CartEntities\ShoppingCartDetail.cs" />

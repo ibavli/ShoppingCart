@@ -139,7 +139,24 @@ namespace ShoppingCart.Dal.Concrete.CartConc
             }
         }
 
-
+        /// <summary>
+        /// Bu metot kendisine verilen kuponun türüne göre yeni sepet toplamını hesaplar.
+        /// </summary>
+        /// <param name="discountType"></param>
+        /// <param name="totalCartAmount"></param>
+        /// <returns></returns>
+        private decimal CalculateNewCartAmount(Coupon coupon, decimal totalCartAmount)
+        {
+            switch (coupon.DiscountType)
+            {
+                case DiscountType.Rate:
+                    return (totalCartAmount - (totalCartAmount * coupon.DiscountValue) / 100);
+                case DiscountType.Amount:
+                    return (totalCartAmount - coupon.DiscountValue);
+                default:
+                    return totalCartAmount;
+            }
+        }
         #endregion
 
         /// <summary>
@@ -165,7 +182,30 @@ namespace ShoppingCart.Dal.Concrete.CartConc
                 return PrepareNewShoppingCart(bestCampaign: getBestCampaign, shoppingCart: shoppingCart);
         }
 
+
+        /// <summary>
+        /// Verilen kuponu eğer koşullar uyuyorsa sepetin toplamına etkiler.
+        /// </summary>
+        /// <param name="shoppingCart"></param>
+        /// <returns></returns>
+        public decimal ApplyCoupon(Coupon coupon = null, decimal totalCartAmount = decimal.Zero)
+        {
+            //Kupon yok ise, direkt sepet toplamını dön.
+            if (coupon == null)
+                return totalCartAmount;
+
+            //Kupona tanımlananan minimum sepet toplamı, sepet toplamından büyük ise kupon uygulanamaz.
+            if (coupon.MinAmount > totalCartAmount)
+                return totalCartAmount;
+
+            //Bu metot kendisine verilen kuponun türüne göre yeni sepet toplamını hesaplar.
+            totalCartAmount = CalculateNewCartAmount(coupon: coupon, totalCartAmount: totalCartAmount);
+            
+            return totalCartAmount;
+        }
+
        
+
         public Entities.Cart.ShoppingCart GetById(int Id)
         {
             return db.ShoppingCart.FirstOrDefault(c => c.Id == Id);
