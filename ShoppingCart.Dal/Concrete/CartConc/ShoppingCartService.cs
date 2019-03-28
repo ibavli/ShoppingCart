@@ -118,7 +118,7 @@ namespace ShoppingCart.Dal.Concrete.CartConc
             {
                 case DiscountType.Rate:     
                     //İndirim olanlar
-                    var newShoppingCartDetailRate = shoppingCart.ShoppingCartDetail.Where(c => Ids.Contains(c.Product.CategoryId)).Select(x => { x.Product.Price = (((x.Product.Price) * (decimal)bestCampaign.DiscountValue) / 100); return x; }).ToList();
+                    var newShoppingCartDetailRate = shoppingCart.ShoppingCartDetail.Where(c => Ids.Contains(c.Product.CategoryId)).Select(x => { x.Product.Price = (x.Product.Price - (((x.Product.Price) * (decimal)bestCampaign.DiscountValue) / 100)); return x; }).ToList();
                     //İndirim olmayanlar
                     var newShoppingCartDetailRateNonDiscount = shoppingCart.ShoppingCartDetail.Where(c => !Ids.Contains(c.Product.CategoryId)).ToList();
                     newShoppingCartDetailRate.AddRange(newShoppingCartDetailRateNonDiscount);

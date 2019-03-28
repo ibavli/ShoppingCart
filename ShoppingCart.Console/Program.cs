@@ -44,7 +44,7 @@ namespace ShoppingCart.Console
             WriteTitle("Oluşturulan Ürünler");
             foreach (var product in products)
             {
-                System.Console.WriteLine($"Product Title : {product.Title}, Price : {product.Price}, Category : {product.Category.Title}, Parent Category : {product.Category.Parent?.Title ?? "Ana kategori yok"}");
+                System.Console.WriteLine($"Product Title : {product.Title}, Price : {product.Price}, Category : {product.Category?.Title ?? "Kategori yok"}, Parent Category : {product.Category?.Parent?.Title ?? "Ana kategori yok"}");
             }
 
             WriteTitle("Oluşturulan Kampanyalar");
@@ -65,9 +65,10 @@ namespace ShoppingCart.Console
             WriteTitle("Oluşturulan Sepetler");
             var totalCartAmount = decimal.Zero;
             var dbCoupon = _couponService.GetById(1);
+            var cartCount = 1;
             foreach (var shoppingCart in shoppingCarts)
             {
-                System.Console.WriteLine($"Cart Id : {shoppingCart.Id} ");
+                WriteInfo($"Sepet : {cartCount}");
                 foreach (var cartDetail in shoppingCart.ShoppingCartDetail)
                 {
                     System.Console.WriteLine($"CartId : {shoppingCart.Id}, Product : {cartDetail.Product.Title},  Quantity : {cartDetail.Quantity}, Price : {cartDetail.Product.Price}, Total = {cartDetail.Quantity * cartDetail.Product.Price}");
@@ -98,7 +99,7 @@ namespace ShoppingCart.Console
                 System.Console.WriteLine($"deliveryCost : {_shoppingCartService.DeliveryCostCalculator(shoppingCart:shoppingCart, costPerDelivery:2, costPerProduct:2)}");
 
                 totalCartAmount = 0;
-
+                cartCount++;
             }
 
 
@@ -111,6 +112,13 @@ namespace ShoppingCart.Console
         static void WriteTitle(string value)
         {
             System.Console.ForegroundColor = ConsoleColor.Red;
+            System.Console.WriteLine("\n" + value.PadRight(System.Console.WindowWidth - 1));
+            System.Console.ResetColor();
+        }
+
+        static void WriteInfo(string value)
+        {
+            System.Console.ForegroundColor = ConsoleColor.Blue;
             System.Console.WriteLine("\n" + value.PadRight(System.Console.WindowWidth - 1));
             System.Console.ResetColor();
         }
