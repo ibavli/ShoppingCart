@@ -94,6 +94,9 @@ namespace ShoppingCart.Console
                 WriteTitle("Sepetin kupon Uygulanmış Hali");
                 System.Console.WriteLine($"Yeni sepet toplam tutarı : {_shoppingCartService.ApplyCoupon(coupon: dbCoupon, totalCartAmount: totalCartAmount)}");
 
+                WriteTitle("Sepet için deliveryCost değeri");
+                System.Console.WriteLine($"deliveryCost : {_shoppingCartService.DeliveryCostCalculator(shoppingCart:shoppingCart, costPerDelivery:2, costPerProduct:2)}");
+
                 totalCartAmount = 0;
 
             }

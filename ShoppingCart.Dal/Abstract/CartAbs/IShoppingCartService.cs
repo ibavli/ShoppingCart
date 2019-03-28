@@ -26,5 +26,12 @@ namespace ShoppingCart.Dal.Abstract.CartAbs
         /// <param name="shoppingCart"></param>
         /// <returns></returns>
         decimal ApplyCoupon(Coupon coupon = null, decimal totalCartAmount = decimal.Zero);
+
+        /// <summary>
+        /// Verilen sepete uygun delivery cost değerini hesaplar.
+        /// </summary>
+        /// <param name="shoppingCart"></param>
+        /// <returns></returns>
+        double DeliveryCostCalculator(ShoppingCart.Entities.Cart.ShoppingCart shoppingCart, double costPerDelivery = 1, double costPerProduct = 1, double fixedCost = 2.99);
     }
 }
