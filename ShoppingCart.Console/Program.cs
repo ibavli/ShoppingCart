@@ -80,7 +80,7 @@ namespace ShoppingCart.Console
                 System.Console.WriteLine($"Sepet toplam tutarı : {totalCartAmount}");
 
                 totalCartAmount = 0;
-                WriteTitle("Sepetin İndirim Uygulanmış Hali");
+                WriteTitle($"Sepet{cartCount} için İndirim Uygulanmış Hali");
                 var shoppingCartWithDiscount = _shoppingCartService.ApplyDiscounts(shoppingCart);
                 foreach (var _cartDetail in shoppingCartWithDiscount.ShoppingCartDetail)
                 {
@@ -92,10 +92,10 @@ namespace ShoppingCart.Console
                 System.Console.WriteLine($"Sepetteki farklı Kategori sayısı : {shoppingCart.ShoppingCartDetail.Select(c => c.Product.CategoryId).Distinct().Count()}");
                 System.Console.WriteLine($"Sepet toplam tutarı : {totalCartAmount}");
 
-                WriteTitle("Sepetin kupon Uygulanmış Hali");
+                WriteTitle($"Sepet{cartCount} kupon Uygulanmış Hali");
                 System.Console.WriteLine($"Yeni sepet toplam tutarı : {_shoppingCartService.ApplyCoupon(coupon: dbCoupon, totalCartAmount: totalCartAmount)}");
 
-                WriteTitle("Sepet için deliveryCost değeri");
+                WriteTitle($"Sepet{cartCount} deliveryCost değeri");
                 System.Console.WriteLine($"deliveryCost : {_shoppingCartService.DeliveryCostCalculator(shoppingCart:shoppingCart, costPerDelivery:2, costPerProduct:2)}");
 
                 totalCartAmount = 0;

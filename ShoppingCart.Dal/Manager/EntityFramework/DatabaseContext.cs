@@ -524,7 +524,7 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 
             Campaign campaign6 = new Campaign()
             {
-                DiscountValue = 51,
+                DiscountValue = 15,
                 ProductCount = 5,
                 DiscountType = DiscountType.Rate
             };
@@ -601,7 +601,7 @@ namespace ShoppingCart.Dal.Manager.EntityFramework
 
             #endregion
 
-            #region Kampanya Ekle
+            #region Kupon Ekle
 
             Coupon coupon = new Coupon()
             {

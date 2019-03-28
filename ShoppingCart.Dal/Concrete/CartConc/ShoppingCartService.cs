@@ -39,104 +39,68 @@ namespace ShoppingCart.Dal.Concrete.CartConc
                 Category = g.FirstOrDefault().Product.Category.Parent,
                 ProductQuantity = g.Sum(c => c.Quantity)
             }).ToList();
-            
-            
+
+
             var catIds = CategoryProductGroupBy.Select(c => c.Category.Id).ToList();
             var parentCatIds = ParentCategoryProductGroupBy.Select(c => c.Category.Id).ToList();
-      
+
             //Kampanyaların içerisinde, kategori ve sepetteki bulunma miktarı uygun düşenleri analiz edelim.
             var returnModel = allCampaigns.Where(c => c.Categories.Any(x => catIds.Contains((int)x.CategoryId) && x.Campaign.ProductCount < CategoryProductGroupBy.Where(y => y.Category.Id == x.CategoryId).FirstOrDefault().ProductQuantity)).ToList();
 
             var parentCatModel = allCampaigns.Where(c => c.Categories.Any(x => parentCatIds.Contains((int)x.CategoryId) && x.Campaign.ProductCount < ParentCategoryProductGroupBy.Where(y => y.Category.Id == x.CategoryId).FirstOrDefault().ProductQuantity)).ToList();
 
             //Parent kategorideki kampanyaları da ekleyelim.
-            returnModel.AddRange(parentCatModel); 
+            returnModel.AddRange(parentCatModel);
 
             return returnModel;
         }
 
         /// <summary>
-        /// Bu metot, kendisine verilen kampanyalar arasından sepet için maksimum indirim yapanı seçer.
-        /// </summary>
-        /// <param name="validCampaigns"></param>
-        /// <returns></returns>
-        private Campaign GetBestCampaign(List<Campaign> validCampaigns, Entities.Cart.ShoppingCart shoppingCart = null)
-        {
-            //Oran verilen kampanyalardan en iyi oranlıyı kampanyayı bul.
-            var bestRateCampaign = validCampaigns.Where(c => c.DiscountType == DiscountType.Rate).OrderByDescending(c => c.DiscountValue).FirstOrDefault();
-
-            //İndirim tutarı verilen kampanyalardan, tutarı en fazla olan kampanyayı bul.
-            var bestAmountCampaign = validCampaigns.Where(c => c.DiscountType == DiscountType.Amount).OrderByDescending(c => c.DiscountValue).FirstOrDefault();
-
-            //Eğer oran verilmiş bir kampanya yoksa, direkt indirim tutarı en iyi olanı dön. Çünkü karşılaştırmaya gerek kalmıyor.
-            if (bestRateCampaign == null)
-                return bestAmountCampaign;
-
-            //Eğer indirim tutarı verilmiş bir kampanya yoksa, direkt en iyi verilmiş oranlı kampanyayı dön. Çünkü karşılaştırmaya gerek kalmıyor.
-            if (bestAmountCampaign == null)
-                return bestRateCampaign;
-
-            //Fakat iki indirim türünden de mevcut ise, aralarından sepeti maksimum indirimi yapacak olanı seçelim.
-            var categoryIds = bestRateCampaign.Categories.Select(x => x.CategoryId).ToList();
-            var parentCategoryIds = db.Category.Where(c => categoryIds.Contains(c.ParentId)).Select(x => x.Id).ToList();
-
-            var Ids = categoryIds;
-            Ids.AddRange(parentCategoryIds.Cast<int?>());
-
-            var totalProductCount = shoppingCart.ShoppingCartDetail.Where(c => Ids.Contains(c.Product.CategoryId)).Sum(x => x.Quantity);
-            var totalProductPrice = shoppingCart.ShoppingCartDetail.Where(c => Ids.Contains(c.Product.CategoryId)).Sum(x => x.Quantity * x.Product.Price);
-
-            var DiscountAmountWithRate = (((double)totalProductPrice * bestRateCampaign.DiscountValue) / 100);
-
-            var DiscountAmountWithAmount = totalProductCount * bestAmountCampaign.DiscountValue;
-
-            if (DiscountAmountWithRate >= DiscountAmountWithAmount)
-                return bestRateCampaign;
-            else
-                return bestAmountCampaign;
-        }
-
-        /// <summary>
-        /// Bu metot çeşitli elemelerden geçtikten sonra elde edilen en iyi kampanyaya göre sepetin yeni halini döndürür.
+        /// Sepete uygun kampanya/kampanyaları metoda gönderip, her bir ürün için, o ürüne uygulanacak maksimum indirimi uygulatıp, yeni sepeti dönüyoruz.
         /// </summary>
         /// <param name="bestCampaign"></param>
         /// <param name="shoppingCart"></param>
         /// <returns></returns>
-        private Entities.Cart.ShoppingCart PrepareNewShoppingCart(Campaign bestCampaign = null, Entities.Cart.ShoppingCart shoppingCart = null)
+        private Entities.Cart.ShoppingCart PrepareNewShoppingCart(List<Campaign> validCampaigns = null, Entities.Cart.ShoppingCart shoppingCart = null)
         {
-            //Eğer sepete uygun kampanya yok ise sepetin kendisi döndürür.
-            if (bestCampaign == null)
-                return shoppingCart;
+            shoppingCart.ShoppingCartDetail.Select(x => { x.Product.Price = GetDiscountPrice(validCampaigns: validCampaigns, product: x.Product); return x; }).ToList();
+            return shoppingCart;
+        }
 
-            var categoryIds = bestCampaign.Categories.Select(x => x.CategoryId).ToList();
-            var parentCategoryIds = db.Category.Where(c => categoryIds.Contains(c.ParentId)).Select(x => x.Id).ToList();
+        /// <summary>
+        /// Kendisine verilen ürünü, o ürünün kategori/ana kategorisine tanımlanmış indirimlerden en fazla indirim yapanı bulup, indirimi yapar.
+        /// </summary>
+        /// <param name="validCampaigns"></param>
+        /// <param name="product"></param>
+        /// <returns></returns>
+        private decimal GetDiscountPrice(List<Campaign> validCampaigns = null, ShoppingCart.Entities.ProductEntities.Product product = null)
+        {
+            //O ürüne uygulanabilecek kampanyalardan Rate için en iyi olanı.
+            var campaingsRate = validCampaigns.Where(c => c.DiscountType == DiscountType.Rate && c.Categories.Any(x => x.CategoryId == product.Category?.Id || x.CategoryId == product.Category?.Parent?.Id)).OrderByDescending(a => a.DiscountValue).FirstOrDefault();
 
-            var Ids = categoryIds;
-            Ids.AddRange(parentCategoryIds.Cast<int?>());
+            //O ürüne uygulanabilecek kampanyalardan Amount için en iyi olanı.
+            var campaingsAmount = validCampaigns.Where(c => c.DiscountType == DiscountType.Amount && c.Categories.Any(x => x.CategoryId == product.Category?.Id || x.CategoryId == product.Category?.Parent?.Id)).OrderByDescending(a => a.DiscountValue).FirstOrDefault();
 
-            switch (bestCampaign.DiscountType)
-            {
-                case DiscountType.Rate:     
-                    //İndirim olanlar
-                    var newShoppingCartDetailRate = shoppingCart.ShoppingCartDetail.Where(c => Ids.Contains(c.Product.CategoryId)).Select(x => { x.Product.Price = (x.Product.Price - (((x.Product.Price) * (decimal)bestCampaign.DiscountValue) / 100)); return x; }).ToList();
-                    //İndirim olmayanlar
-                    var newShoppingCartDetailRateNonDiscount = shoppingCart.ShoppingCartDetail.Where(c => !Ids.Contains(c.Product.CategoryId)).ToList();
-                    newShoppingCartDetailRate.AddRange(newShoppingCartDetailRateNonDiscount);
+            //Eğer bu ürüne ait hiçbir uyumlu kampanya yoksa
+            if (campaingsRate == null && campaingsAmount == null)
+                return product.Price;
 
-                    shoppingCart.ShoppingCartDetail = newShoppingCartDetailRate;
-                    return shoppingCart;
-                case DiscountType.Amount:
-                    //İndirim olanlar
-                    var newShoppingCartDetailAmount = shoppingCart.ShoppingCartDetail.Where(c => Ids.Contains(c.Product.CategoryId)).Select(x => { x.Product.Price = (x.Product.Price - (decimal)bestCampaign.DiscountValue); return x; }).ToList();
-                    //İndirim olmayanlar
-                    var newShoppingCartDetailAmountNonDiscount = shoppingCart.ShoppingCartDetail.Where(c => !Ids.Contains(c.Product.CategoryId)).ToList();
-                    newShoppingCartDetailAmount.AddRange(newShoppingCartDetailAmountNonDiscount);
+            //Eğer oran verilmiş bir kampanya yoksa, direkt amount için indirimli fiyatı hesapla.
+            if (campaingsRate == null && campaingsAmount != null)
+                return (product.Price - (decimal)campaingsAmount.DiscountValue);
 
-                    shoppingCart.ShoppingCartDetail = newShoppingCartDetailAmount;
-                    return shoppingCart;
-                default:
-                    return shoppingCart;
-            }
+            //Eğer indirim tutarı verilmiş bir kampanya yoksa, direkt rate değeri için indirimli fiyatı hesapla.
+            if (campaingsAmount == null && campaingsRate != null)
+                return (product.Price - (((product.Price) * (decimal)campaingsRate.DiscountValue) / 100));
+
+            //Eğer ikisinden de mevcutsa bu ürüne daha fazla indirim yapmış olanı tespit et ve o fiyatı dön.
+            var discountWithAmount = (product.Price - (decimal)campaingsAmount.DiscountValue);
+            var discountWithRate = (product.Price - (((product.Price) * (decimal)campaingsRate.DiscountValue) / 100));
+
+            if (discountWithAmount > discountWithRate)
+                return discountWithRate;
+            else
+                return discountWithAmount;
         }
 
         /// <summary>
@@ -170,17 +134,12 @@ namespace ShoppingCart.Dal.Concrete.CartConc
             //Bu metot, kendisine verilen sepetteki mevcut tüm kampanyaları analiz eder ve kampanyalardan uygun olanların listesini geri döner.
             var validCampaigns = ValidCampaigns(shoppingCart: shoppingCart);
 
-            //ValidCampaigns metodundan, sepet için uygulanabilecek hiçbir kampanya geri dönmedi ise metoda mevcut sepeti geri döndürmesi için gönderiyoruz.
-            if (validCampaigns.Count < 0)
-                return PrepareNewShoppingCart(shoppingCart:shoppingCart);
+            //ValidCampaigns metodundan, sepet için uygulanabilecek hiçbir kampanya geri dönmedi ise mevcut sepeti dönüyoruz.
+            if (validCampaigns.Count == 0)
+                return shoppingCart;
 
-            //Eğer sepete uygun bir adet kampanya varsa direkt ona uygun sepeti hazırlayıp dönüyoruz.
-            if (validCampaigns.Count == 1)
-                return PrepareNewShoppingCart(bestCampaign: validCampaigns.FirstOrDefault(), shoppingCart: shoppingCart);
-
-            //Sepete uygun birden fazla sayıda kampanya mevcutsa, aralarındaki en iyisini buluyoruz.
-            var getBestCampaign = GetBestCampaign(validCampaigns:validCampaigns, shoppingCart:shoppingCart);
-                return PrepareNewShoppingCart(bestCampaign: getBestCampaign, shoppingCart: shoppingCart);
+            //Sepete uygun kampanya/kampanyaları metoda gönderip, her bir ürün için, o ürüne uygulanacak maksimum indirimi uygulatıp, yeni sepeti dönüyoruz.
+            return PrepareNewShoppingCart(validCampaigns: validCampaigns, shoppingCart: shoppingCart);
         }
 
 
@@ -201,7 +160,7 @@ namespace ShoppingCart.Dal.Concrete.CartConc
 
             //Bu metot kendisine verilen kuponun türüne göre yeni sepet toplamını hesaplar.
             totalCartAmount = CalculateNewCartAmount(coupon: coupon, totalCartAmount: totalCartAmount);
-            
+
             return totalCartAmount;
         }
 
@@ -238,6 +197,6 @@ namespace ShoppingCart.Dal.Concrete.CartConc
             }
             return false;
         }
-   
+
     }
 }
